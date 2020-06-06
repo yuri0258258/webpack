@@ -42,6 +42,11 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: './src/templates/index.html',
+            filename: 'index.html',
+        }),
+        new HtmlWebpackPlugin({
+            template: './src/templates/under/company.html',
+            filename: 'under/company.html',
         }),
         new CleanWebpackPlugin(),
     ],
