@@ -2,8 +2,11 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
+    mode: 'production',
+    devtool: 'source-map',
     entry: './src/js/main.js',
     output: {
         path: path.resolve(__dirname, './dist'),
@@ -12,13 +15,40 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.css/,
+             test: /\.vue/,
+             exclude: /node_modules/,
+             use: [
+                 {
+                     loader: 'vue-loader',
+                 }
+             ]
+            },
+            {
+            test: /\.js/,
+            exclude: /node_modules/,
+            use: [
+                {
+                    loader: 'babel-loader',
+                    options: {
+                        presets:[['@babel/preset-env',{"targets": '> 0.25%, not dead'}]],
+                    }
+                }
+            ]
+            },
+            {
+                test: /\.(css|sass|scss)/,
                 use: [
                     {
                         loader: MiniCssExtractPlugin.loader,
                     },
                     {
                         loader: 'css-loader',
+                        options:{
+                       sourceMap: false,
+                        },
+                    },
+                    {
+                        loader: 'sass-loader',
                     },
                 ],
             },
@@ -32,11 +62,21 @@ module.exports = {
                             name: 'img/[name].[ext]',
                         }
                     },
+                    {
+                    loader: 'image-webpack-loader',
+                    options: {
+                        mozjpeg: {
+                            progressive: true,
+                            quality: 65,
+                        }
+                    }
+                    },
                 ],
             }
         ],
     },
     plugins: [
+        new VueLoaderPlugin(),
         new MiniCssExtractPlugin({
             filename: './stylesheets/main.css',
         }),
